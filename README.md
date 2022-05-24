@@ -16,3 +16,8 @@ Status: work in progress, pretty alpha, not yet released.
 
 [`simavr-sys`](https://github.com/dylanmckay/simavr-sim) seems unmaintained at
 the moment, hence this project.
+
+# License
+
+Copyright (c) 2022, Patryk Wychowaniec <pwychowaniec@pm.me>.    
+Licensed under the MIT license.
