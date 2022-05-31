@@ -1,31 +1,69 @@
-#![feature(exit_status_error)]
-
-use std::{env, path::PathBuf, process::Command};
+use anyhow::Context;
+use std::{
+    env, fs,
+    path::{Path, PathBuf},
+    process::Command,
+};
 
 fn main() {
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+
     println!("cargo:rerun-if-changed=build.rs");
 
-    // ---
+    build_simavr(&out_path);
+    build_simavr_bindings(&out_path);
+    link_libelf();
+}
 
-    eprintln!("=> Compiling simavr");
+fn build_simavr(out: &Path) {
+    println!("=> Building simavr");
 
-    Command::new("make")
+    if !Path::new("vendor")
+        .join("simavr")
+        .join("README.md")
+        .exists()
+    {
+        panic!("\
+            `vendor/simavr` doesn't seem to contain the expected source code. \
+            If you're cloning simavr-ffi by hand, please use `git clone ... --recurse-submodules`"
+        );
+    }
+
+    #[cfg(target_family = "unix")]
+    build_simavr_unix(out);
+
+    #[cfg(not(target_family = "unix"))]
+    panic!("Sorry, I don't know how to build simavr on this architecture");
+}
+
+#[cfg(target_family = "unix")]
+fn build_simavr_unix(out: &Path) {
+    let out_simavr = out.join("simavr");
+
+    if !out_simavr.exists() {
+        fs::create_dir(&out_simavr)
+            .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
+            .unwrap();
+    }
+
+    let result = Command::new("make")
         .current_dir("vendor/simavr/simavr")
+        .env("OBJ", out_simavr.as_os_str())
+        .arg("-e")
+        .arg("libsimavr")
         .status()
-        .expect("Couldn't build simavr")
-        .exit_ok()
         .expect("Couldn't build simavr");
 
-    println!(
-        "cargo:rustc-link-search={}",
-        "vendor/simavr/simavr/obj-x86_64-unknown-linux-gnu" // TODO
-    );
+    if !result.success() {
+        panic!("Couldn't build simavr: `make` failed");
+    }
 
+    println!("cargo:rustc-link-search={}", out_simavr.display());
     println!("cargo:rustc-link-lib=static={}", "simavr");
+}
 
-    // ---
-
-    eprintln!("=> Generating bindings");
+fn build_simavr_bindings(out: &Path) {
+    println!("=> Building simavr bindings");
 
     let bindings = bindgen::Builder::default()
         .header("vendor/simavr/simavr/sim/avr_ioport.h")
@@ -33,17 +71,15 @@ fn main() {
         .header("vendor/simavr/simavr/sim/sim_avr.h")
         .header("vendor/simavr/simavr/sim/sim_elf.h")
         .generate()
-        .expect("Unable to generate bindings");
-
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+        .expect("Couldn't generate simavr's bindings");
 
     bindings
-        .write_to_file(out_path.join("bindings.rs"))
-        .expect("Couldn't write bindings");
+        .write_to_file(out.join("bindings.rs"))
+        .expect("Couldn't write simavr's bindings");
+}
 
-    // ---
-
-    eprintln!("=> Linking libelf");
+fn link_libelf() {
+    println!("=> Linking libelf");
 
     pkg_config::probe_library("libelf").unwrap();
 
