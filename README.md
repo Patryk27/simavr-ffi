@@ -2,11 +2,13 @@
 
 Low-level bindings to [simavr](https://github.com/buserror/simavr).
 
-Status: work in progress, pretty alpha, not yet released.
+Status: alpha; work in progress; not yet released.
+
+Supported platforms: Linux, Mac (pull requests for Windows welcome!).
 
 ## Requirements
 
-- clang (with `LIBCLANG_PATH`),
+- clang,
 - libelf,
 - pkg-config.
 
