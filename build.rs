@@ -14,6 +14,7 @@ fn main() {
     build_simavr(&out_path);
     generate_simavr_bindings(&out_path);
     link_libelf();
+    link_zlib();
 }
 
 fn build_simavr(out: &Path) {
@@ -104,4 +105,12 @@ fn link_libelf() {
     pkg_config::probe_library("libelf").unwrap();
 
     println!("cargo:rustc-link-lib=static=elf");
+}
+
+fn link_zlib() {
+    println!("=> Linking zlib");
+
+    pkg_config::probe_library("zlib").unwrap();
+
+    println!("cargo:rustc-link-lib=z");
 }

@@ -10,7 +10,8 @@ Supported platforms: Linux, Mac (pull requests for Windows welcome!).
 
 - clang,
 - libelf,
-- pkg-config.
+- pkg-config,
+- zlib.
 
 ### Nix (Linux)
 
