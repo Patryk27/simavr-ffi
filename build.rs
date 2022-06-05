@@ -77,7 +77,10 @@ fn generate_simavr_bindings(out: &Path) {
             let metadata = entry.metadata().unwrap();
             let name = entry.file_name().to_string_lossy();
 
-            metadata.is_file() && name.ends_with(".h") && name != "sim_core.h"
+            metadata.is_file()
+                && name.ends_with(".h")
+                && name != "sim_cmds.h"
+                && name != "sim_core.h"
         })
         .map(|header| header.path().to_string_lossy().to_string());
 
