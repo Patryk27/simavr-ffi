@@ -7,5 +7,5 @@ pkgs.mkShell {
     pkg-config
   ];
 
-  LIBCLANG_PATH = "${pkgs.llvmPackages_11.libclang.lib}/lib";
+  LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
 }

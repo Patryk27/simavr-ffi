@@ -4,14 +4,15 @@ use std::{
     path::{Path, PathBuf},
     process::Command,
 };
+use walkdir::WalkDir;
 
 fn main() {
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
-
     println!("cargo:rerun-if-changed=build.rs");
 
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+
     build_simavr(&out_path);
-    build_simavr_bindings(&out_path);
+    generate_simavr_bindings(&out_path);
     link_libelf();
 }
 
@@ -23,7 +24,8 @@ fn build_simavr(out: &Path) {
         .join("README.md")
         .exists()
     {
-        panic!("\
+        panic!(
+            "\
             `vendor/simavr` doesn't seem to contain the expected source code. \
             If you're cloning simavr-ffi by hand, please use `git clone ... --recurse-submodules`"
         );
@@ -59,17 +61,32 @@ fn build_simavr_unix(out: &Path) {
     }
 
     println!("cargo:rustc-link-search={}", out_simavr.display());
-    println!("cargo:rustc-link-lib=static={}", "simavr");
+    println!("cargo:rustc-link-lib=static=simavr");
 }
 
-fn build_simavr_bindings(out: &Path) {
-    println!("=> Building simavr bindings");
+fn generate_simavr_bindings(out: &Path) {
+    println!("=> Generating simavr bindings");
 
-    let bindings = bindgen::Builder::default()
-        .header("vendor/simavr/simavr/sim/avr_ioport.h")
-        .header("vendor/simavr/simavr/sim/avr_uart.h")
-        .header("vendor/simavr/simavr/sim/sim_avr.h")
-        .header("vendor/simavr/simavr/sim/sim_elf.h")
+    let mut builder = bindgen::Builder::default();
+
+    let headers = WalkDir::new("vendor/simavr/simavr/sim")
+        .max_depth(1)
+        .into_iter()
+        .map(|header| header.unwrap())
+        .filter(|entry| {
+            let metadata = entry.metadata().unwrap();
+            let name = entry.file_name().to_string_lossy();
+
+            metadata.is_file() && name.ends_with(".h") && name != "sim_core.h"
+        })
+        .map(|header| header.path().to_string_lossy().to_string());
+
+    for header in headers {
+        println!("-> Found header: {}", header);
+        builder = builder.header(header);
+    }
+
+    let bindings = builder
         .generate()
         .expect("Couldn't generate simavr's bindings");
 
