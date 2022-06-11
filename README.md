@@ -2,11 +2,13 @@
 
 Low-level bindings to [simavr](https://github.com/buserror/simavr).
 
-Status: alpha; work in progress; not yet released.
+Status: alpha; work in progress.
 
-Supported platforms: Linux, Mac (pull requests for Windows welcome!).
+Supported platforms: Linux & Mac (pull requests for Windows welcome!).
 
 ## Requirements
+
+Compile-time:
 
 - clang,
 - libelf,
@@ -34,10 +36,10 @@ $ brew install avr-gcc libelf pkg-config
 
 ## FAQ
 
-### Why not `simavr-sys`?
+### How does it compare to `simavr-sys`?
 
 [`simavr-sys`](https://github.com/dylanmckay/simavr-sim) seems unmaintained at
-the moment.
+the moment, so `simavr-ffi` is just more up-to-date.
 
 ## License
 

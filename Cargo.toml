@@ -1,12 +1,18 @@
 [package]
 name = "simavr-ffi"
 version = "0.1.0"
-license = "MIT"
 edition = "2021"
+authors = ["Patryk Wychowaniec <pwychowaniec@pm.me>"]
+license = "MIT"
 links = "simavr"
+description = "Low-level bindings to simavr"
+readme = "README.md"
+repository = "https://github.com/Patryk27/simavr-ffi"
+keywords = ["avr", "simavr", "sys", "ffi", "bindings"]
 
 [build-dependencies]
 anyhow = "1.0"
 bindgen = "0.59"
+fs_extra = "1.0"
 pkg-config = "0.3"
 walkdir = "2.3"

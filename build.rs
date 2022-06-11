@@ -28,7 +28,8 @@ fn build_simavr(out: &Path) {
         panic!(
             "\
             `vendor/simavr` doesn't seem to contain the expected source code. \
-            If you're cloning simavr-ffi by hand, please use `git clone ... --recurse-submodules`"
+            If you're cloning simavr-ffi by hand, please use `git clone ... \
+            --recurse-submodules`."
         );
     }
 
@@ -47,10 +48,19 @@ fn build_simavr_unix(out: &Path) {
         fs::create_dir(&out_simavr)
             .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
             .unwrap();
+
+        fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
+            .with_context(|| {
+                format!(
+                    "Couldn't copy simavr's sources to: {}",
+                    out_simavr.display()
+                )
+            })
+            .unwrap();
     }
 
     let result = Command::new("make")
-        .current_dir("vendor/simavr/simavr")
+        .current_dir(out_simavr.join("simavr").join("simavr"))
         .env("OBJ", out_simavr.as_os_str())
         .arg("-e")
         .arg("libsimavr")
