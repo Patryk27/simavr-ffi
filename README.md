@@ -1,4 +1,7 @@
-# simavr-ffi
+# simavr-ffi &emsp; [![crates-badge]][crates-link]
+
+[crates-badge]: https://img.shields.io/crates/v/simavr-ffi.svg
+[crates-link]: https://crates.io/crates/simavr-ffi
 
 Low-level bindings to [simavr](https://github.com/buserror/simavr).
 
