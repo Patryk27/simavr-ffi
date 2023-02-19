@@ -46,5 +46,5 @@ the moment, so `simavr-ffi` is just more up-to-date.
 
 ## License
 
-Copyright (c) 2022, Patryk Wychowaniec <pwychowaniec@pm.me>.    
+Copyright (c) 2022-2023, Patryk Wychowaniec <pwychowaniec@pm.me>.    
 Licensed under the MIT license.
