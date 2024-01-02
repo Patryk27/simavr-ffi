@@ -5,8 +5,6 @@
 
 Low-level bindings to [simavr](https://github.com/buserror/simavr).
 
-Status: alpha; work in progress.
-
 Supported platforms: Linux & Mac (pull requests for Windows welcome!).
 
 ## Requirements
