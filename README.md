@@ -40,7 +40,7 @@ $ brew install avr-gcc libelf pkg-config
 ### How does it compare to `simavr-sys`?
 
 [`simavr-sys`](https://github.com/dylanmckay/simavr-sim) seems unmaintained at
-the moment, so `simavr-ffi` is just more up-to-date.
+the moment, while `simavr-ffi` is up-to-date.
 
 ## License
 
