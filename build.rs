@@ -15,6 +15,7 @@ fn main() {
     generate_simavr_bindings(&out_path);
     link_libelf();
     link_zlib();
+    link_libzstd();
 }
 
 fn build_simavr(out: &Path) {
@@ -123,4 +124,11 @@ fn link_zlib() {
     pkg_config::probe_library("zlib").unwrap();
 
     println!("cargo:rustc-link-lib=z");
+}
+
+fn link_libzstd() {
+    println!("=> Linking libzstd");
+
+    pkg_config::probe_library("libzstd").unwrap();
+    println!("cargo-rustc-link-lib=zstd");
 }
