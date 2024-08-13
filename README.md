@@ -19,7 +19,7 @@ Compile-time:
 ### Nix (Linux)
 
 ``` bash
-$ nix-shell
+$ nix develop
 ```
 
 ### Ubuntu
