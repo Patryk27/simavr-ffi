@@ -16,7 +16,7 @@ Compile-time:
 - pkg-config,
 - zlib.
 
-### Nix (Linux)
+### Nix
 
 ``` bash
 $ nix develop
