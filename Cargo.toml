@@ -1,6 +1,6 @@
 [package]
 name = "simavr-ffi"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["Patryk Wychowaniec <pwychowaniec@pm.me>"]
 license = "MIT"
