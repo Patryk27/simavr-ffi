@@ -130,5 +130,6 @@ fn link_libzstd() {
     println!("=> Linking libzstd");
 
     pkg_config::probe_library("libzstd").unwrap();
+
     println!("cargo-rustc-link-lib=zstd");
 }
