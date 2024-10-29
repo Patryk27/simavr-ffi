@@ -7,7 +7,7 @@ Low-level bindings to [simavr](https://github.com/buserror/simavr):
 
 ```toml
 [dependencies]
-simavr-ffi = "1.0.1"
+simavr-ffi = "1.1.0"
 ```
 
 Supported platforms: Linux & Mac (pull requests welcome!).
