@@ -9,36 +9,41 @@
     };
   };
 
-  outputs = { self, flake-utils, nixpkgs }:
-    flake-utils.lib.eachDefaultSystem
-      (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-          };
+  outputs =
+    {
+      self,
+      flake-utils,
+      nixpkgs,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
 
-        in
-        {
-          devShell = pkgs.mkShell {
-            shellHook =
-              if system == "aarch64-darwin" then
-                ''
-                  export NIX_CFLAGS_COMPILE="-isystem ${pkgs.libelf}/include"
-                  export NIX_CFLAGS_COMPILE_FOR_TARGET=""
-                ''
-              else
-                "";
+      in
+      {
+        devShell = pkgs.mkShell {
+          shellHook =
+            if system == "aarch64-darwin" then
+              ''
+                export NIX_CFLAGS_COMPILE="-isystem ${pkgs.libelf}/include"
+                export NIX_CFLAGS_COMPILE_FOR_TARGET=""
+              ''
+            else
+              "";
 
-            buildInputs = with pkgs; [
-              libelf
-              llvmPackages.clang
-              pkg-config
-              zlib
-              zstd
-            ];
+          buildInputs = with pkgs; [
+            libelf
+            llvmPackages.clang
+            pkg-config
+            zlib
+            zstd
+          ];
 
-            LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
-          };
-        }
-      );
+          LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
+        };
+      }
+    );
 }
