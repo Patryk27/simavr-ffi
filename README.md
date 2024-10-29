@@ -10,7 +10,7 @@ Low-level unsafe bindings to [simavr](https://github.com/buserror/simavr):
 simavr-ffi = "1.1.0"
 ```
 
-Supported platforms: Linux & Mac (pull requests welcome!).
+Supported platforms: Linux & Mac (pull requests for Windows etc. welcome!).
 
 If you're looking for something high-level and safe, see [AvrTester](https://github.com/Patryk27/avr-tester).
 
