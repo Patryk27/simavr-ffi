@@ -12,7 +12,7 @@ simavr-ffi = "1.1.0"
 
 Supported platforms: Linux & Mac (pull requests welcome!).
 
-If you're looking for something high-level and safe, see: <https://github.com/Patryk27/avr-tester>.
+If you're looking for something high-level and safe, see [AvrTester](https://github.com/Patryk27/avr-tester).
 
 ## Requirements
 
