@@ -3,7 +3,7 @@
 [crates-badge]: https://img.shields.io/crates/v/simavr-ffi.svg
 [crates-link]: https://crates.io/crates/simavr-ffi
 
-Low-level bindings to [simavr](https://github.com/buserror/simavr):
+Low-level unsafe bindings to [simavr](https://github.com/buserror/simavr):
 
 ```toml
 [dependencies]
@@ -11,6 +11,8 @@ simavr-ffi = "1.1.0"
 ```
 
 Supported platforms: Linux & Mac (pull requests welcome!).
+
+If you're looking for something high-level and safe, see: <https://github.com/Patryk27/avr-tester>.
 
 ## Requirements
 
