@@ -16,3 +16,6 @@ bindgen = "0.69"
 fs_extra = "1.0"
 pkg-config = "0.3"
 walkdir = "2.3"
+
+[features]
+patch-twi-inconsistencies = []

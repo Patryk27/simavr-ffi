@@ -3,15 +3,21 @@
 [crates-badge]: https://img.shields.io/crates/v/simavr-ffi.svg
 [crates-link]: https://crates.io/crates/simavr-ffi
 
-Low-level bindings to [simavr](https://github.com/buserror/simavr).
+Low-level bindings to [simavr](https://github.com/buserror/simavr):
 
-Supported platforms: Linux & Mac (pull requests for Windows welcome!).
+```toml
+[dependencies]
+simavr-ffi = "1.0.1"
+```
+
+Supported platforms: Linux & Mac (pull requests welcome!).
 
 ## Requirements
 
 Compile-time:
 
 - clang,
+- git,
 - libelf,
 - pkg-config,
 - zlib.
@@ -33,6 +39,12 @@ $ sudo apt install clang libelf-dev pkg-config
 ```bash
 $ brew install libelf pkg-config
 ```
+
+## Feature flags
+
+All feature flags are disabled by default - if you want, you can activate:
+
+- `patch-twi-inconsistencies` - applies a fix for https://github.com/buserror/simavr/issues/453
 
 ## FAQ
 

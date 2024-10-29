@@ -9,40 +9,90 @@ use walkdir::WalkDir;
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
 
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+    let out = PathBuf::from(env::var("OUT_DIR").unwrap());
 
-    build_simavr(&out_path);
-    generate_simavr_bindings(&out_path);
-    link_libelf();
-    link_zlib();
-    link_libzstd();
+    check();
+    patch();
+    copy(&out);
+    revert_patch();
+    build(&out);
+    generate_bindings(&out);
+    link();
 }
 
-fn build_simavr(out: &Path) {
-    println!("=> Building simavr");
-
+fn check() {
     if !Path::new("vendor")
         .join("simavr")
         .join("README.md")
         .exists()
     {
         panic!(
-            "\
-            `vendor/simavr` doesn't seem to contain the expected source code. \
-            If you're cloning simavr-ffi by hand, please use `git clone ... \
-            --recurse-submodules`."
+            "`vendor/simavr` doesn't exist - if you're cloning simavr-ffi by \
+             hand, please use `git clone ... --recurse-submodules`"
         );
     }
+}
+
+fn patch() {
+    println!("=> Patching simavr");
+
+    simavr_git(&["reset", "--hard", "HEAD"]);
+
+    #[cfg(feature = "patch-twi-inconsistencies")]
+    patch_ex("twi-inconsistencies.patch");
+}
+
+#[allow(unused)]
+fn patch_ex(name: &str) {
+    let path = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("patches")
+        .join(name)
+        .canonicalize()
+        .unwrap();
+
+    simavr_git(&["apply", &path.display().to_string()]);
+}
+
+fn copy(out: &Path) {
+    println!("=> Copying simavr");
+
+    let out_simavr = out.join("simavr");
+
+    if !out_simavr.exists() {
+        fs::create_dir(&out_simavr)
+            .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
+            .unwrap();
+
+        fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
+            .with_context(|| {
+                format!(
+                    "Couldn't copy simavr's sources to: {}",
+                    out_simavr.display()
+                )
+            })
+            .unwrap();
+    }
+}
+
+fn revert_patch() {
+    // Don't leave the tree dirty during development
+    simavr_git(&["reset", "--hard", "HEAD"]);
+}
+
+fn build(out: &Path) {
+    println!("=> Building simavr");
 
     #[cfg(target_family = "unix")]
-    build_simavr_unix(out);
+    build_unix(out);
 
     #[cfg(not(target_family = "unix"))]
-    panic!("Sorry, I don't know how to build simavr on this architecture");
+    panic!("simavr-ffi works only on Unixes right now - pull requests are welcome!");
 }
 
 #[cfg(target_family = "unix")]
-fn build_simavr_unix(out: &Path) {
+fn build_unix(out: &Path) {
     let out_simavr = out.join("simavr");
 
     if !out_simavr.exists() {
@@ -76,7 +126,7 @@ fn build_simavr_unix(out: &Path) {
     println!("cargo:rustc-link-lib=static=simavr");
 }
 
-fn generate_simavr_bindings(out: &Path) {
+fn generate_bindings(out: &Path) {
     println!("=> Generating simavr bindings");
 
     let mut builder = bindgen::Builder::default();
@@ -97,7 +147,6 @@ fn generate_simavr_bindings(out: &Path) {
         .map(|header| header.path().to_string_lossy().to_string());
 
     for header in headers {
-        println!("-> Found header: {}", header);
         builder = builder.header(header);
     }
 
@@ -108,6 +157,12 @@ fn generate_simavr_bindings(out: &Path) {
     bindings
         .write_to_file(out.join("bindings.rs"))
         .expect("Couldn't write simavr's bindings");
+}
+
+fn link() {
+    link_libelf();
+    link_zlib();
+    link_libzstd();
 }
 
 fn link_libelf() {
@@ -132,4 +187,22 @@ fn link_libzstd() {
     pkg_config::probe_library("libzstd").unwrap();
 
     println!("cargo-rustc-link-lib=zstd");
+}
+
+fn simavr_git(args: &[&str]) {
+    let status = Command::new("git")
+        .current_dir("vendor/simavr")
+        .args(args)
+        .status()
+        .expect("Couldn't run `git`");
+
+    if !status.success() {
+        panic!(
+            "`git {}` returned a non-zero exit code",
+            args.iter()
+                .map(|arg| arg.to_string())
+                .collect::<Vec<_>>()
+                .join(" ")
+        );
+    }
 }
