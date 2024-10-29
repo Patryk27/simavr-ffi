@@ -47,7 +47,7 @@ fn copy(out: &Path) {
         .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
         .unwrap();
 
-    fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
+    fs_extra::copy_items(&["vendor/simavr"], &out, &Default::default())
         .with_context(|| {
             format!(
                 "Couldn't copy simavr's sources to: {}",
@@ -80,7 +80,7 @@ fn patch_ex(out: &Path, name: &str) {
         .arg("-p1")
         .arg("-i")
         .arg(path)
-        .current_dir(out.join("simavr").join("simavr"))
+        .current_dir(out.join("simavr"))
         .status()
         .expect("Couldn't run `patch`");
 
@@ -103,23 +103,8 @@ fn build(out: &Path) {
 fn build_unix(out: &Path) {
     let out_simavr = out.join("simavr");
 
-    if !out_simavr.exists() {
-        fs::create_dir(&out_simavr)
-            .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
-            .unwrap();
-
-        fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
-            .with_context(|| {
-                format!(
-                    "Couldn't copy simavr's sources to: {}",
-                    out_simavr.display()
-                )
-            })
-            .unwrap();
-    }
-
     let result = Command::new("make")
-        .current_dir(out_simavr.join("simavr").join("simavr"))
+        .current_dir(out_simavr.join("simavr"))
         .env("OBJ", out_simavr.as_os_str())
         .arg("-e")
         .arg("libsimavr")
@@ -137,9 +122,10 @@ fn build_unix(out: &Path) {
 fn generate_bindings(out: &Path) {
     println!("=> Generating simavr bindings");
 
+    let simavr = out.join("simavr").join("simavr").join("sim");
     let mut builder = bindgen::Builder::default();
 
-    let headers = WalkDir::new("vendor/simavr/simavr/sim")
+    let headers = WalkDir::new(simavr)
         .max_depth(1)
         .into_iter()
         .map(|header| header.unwrap())
