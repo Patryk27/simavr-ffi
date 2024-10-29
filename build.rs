@@ -12,9 +12,8 @@ fn main() {
     let out = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     check();
-    patch();
     copy(&out);
-    revert_patch();
+    patch(&out);
     build(&out);
     generate_bindings(&out);
     link();
@@ -31,28 +30,6 @@ fn check() {
              hand, please use `git clone ... --recurse-submodules`"
         );
     }
-}
-
-fn patch() {
-    println!("=> Patching simavr");
-
-    simavr_git(&["reset", "--hard", "HEAD"]);
-
-    #[cfg(feature = "patch-twi-inconsistencies")]
-    patch_ex("twi-inconsistencies.patch");
-}
-
-#[allow(unused)]
-fn patch_ex(name: &str) {
-    let path = Path::new(file!())
-        .parent()
-        .unwrap()
-        .join("patches")
-        .join(name)
-        .canonicalize()
-        .unwrap();
-
-    simavr_git(&["apply", &path.display().to_string()]);
 }
 
 fn copy(out: &Path) {
@@ -76,9 +53,36 @@ fn copy(out: &Path) {
     }
 }
 
-fn revert_patch() {
-    // Don't leave the tree dirty during development
-    simavr_git(&["reset", "--hard", "HEAD"]);
+fn patch(out: &Path) {
+    println!("=> Patching simavr");
+
+    #[cfg(feature = "patch-twi-inconsistencies")]
+    patch_ex(out, "twi-inconsistencies.patch");
+
+    let _ = out;
+}
+
+#[allow(unused)]
+fn patch_ex(out: &Path, name: &str) {
+    let path = Path::new(file!())
+        .parent()
+        .unwrap()
+        .join("patches")
+        .join(name)
+        .canonicalize()
+        .unwrap();
+
+    let status = Command::new("patch")
+        .arg("-p1")
+        .arg("-i")
+        .arg(path)
+        .current_dir(out.join("simavr").join("simavr"))
+        .status()
+        .expect("Couldn't run `patch`");
+
+    if !status.success() {
+        panic!("`patch` returned a non-zero exit code");
+    }
 }
 
 fn build(out: &Path) {
@@ -88,7 +92,7 @@ fn build(out: &Path) {
     build_unix(out);
 
     #[cfg(not(target_family = "unix"))]
-    panic!("simavr-ffi works only on Unixes right now - pull requests are welcome!");
+    panic!("simavr-ffi can be built only on Unixes right now - pull requests are welcome!");
 }
 
 #[cfg(target_family = "unix")]
@@ -187,22 +191,4 @@ fn link_libzstd() {
     pkg_config::probe_library("libzstd").unwrap();
 
     println!("cargo-rustc-link-lib=zstd");
-}
-
-fn simavr_git(args: &[&str]) {
-    let status = Command::new("git")
-        .current_dir("vendor/simavr")
-        .args(args)
-        .status()
-        .expect("Couldn't run `git`");
-
-    if !status.success() {
-        panic!(
-            "`git {}` returned a non-zero exit code",
-            args.iter()
-                .map(|arg| arg.to_string())
-                .collect::<Vec<_>>()
-                .join(" ")
-        );
-    }
 }

@@ -19,7 +19,7 @@ If you're looking for something high-level and safe, see [AvrTester](https://git
 Compile-time:
 
 - clang,
-- git,
+- patch (optional, required only if you enable the `patch-twi-inconsistencies` feature flag),
 - libelf,
 - pkg-config,
 - zlib.
