@@ -7,7 +7,7 @@ Low-level unsafe bindings to [simavr](https://github.com/buserror/simavr):
 
 ```toml
 [dependencies]
-simavr-ffi = "1.1.0"
+simavr-ffi = "1"
 ```
 
 Supported platforms: Linux & Mac (pull requests for Windows etc. welcome!).
