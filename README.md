@@ -44,7 +44,7 @@ $ brew install libelf pkg-config
 
 ## Feature flags
 
-All feature flags are disabled by default - if you want, you can activate:
+If you want, you can activate following feature flags (disabled by default):
 
 - `patch-twi-inconsistencies` - applies a fix for https://github.com/buserror/simavr/issues/453
 
