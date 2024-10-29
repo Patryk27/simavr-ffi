@@ -37,20 +37,24 @@ fn copy(out: &Path) {
 
     let out_simavr = out.join("simavr");
 
-    if !out_simavr.exists() {
-        fs::create_dir(&out_simavr)
-            .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
-            .unwrap();
-
-        fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
-            .with_context(|| {
-                format!(
-                    "Couldn't copy simavr's sources to: {}",
-                    out_simavr.display()
-                )
-            })
+    if out_simavr.exists() {
+        fs::remove_dir_all(&out_simavr)
+            .with_context(|| format!("Couldn't remove directory: {}", out_simavr.display()))
             .unwrap();
     }
+
+    fs::create_dir(&out_simavr)
+        .with_context(|| format!("Couldn't create directory: {}", out_simavr.display()))
+        .unwrap();
+
+    fs_extra::copy_items(&["vendor/simavr"], &out_simavr, &Default::default())
+        .with_context(|| {
+            format!(
+                "Couldn't copy simavr's sources to: {}",
+                out_simavr.display()
+            )
+        })
+        .unwrap();
 }
 
 fn patch(out: &Path) {
