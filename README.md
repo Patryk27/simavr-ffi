@@ -16,7 +16,7 @@ Compile-time:
 - pkg-config,
 - zlib.
 
-### Nix
+### Nix (Linux / Mac)
 
 ``` bash
 $ nix develop
@@ -31,8 +31,7 @@ $ sudo apt install clang libelf-dev pkg-config
 ### Mac
 
 ```bash
-$ brew tap osx-cross/avr
-$ brew install avr-gcc libelf pkg-config
+$ brew install libelf pkg-config
 ```
 
 ## FAQ

@@ -30,14 +30,11 @@
                 "";
 
             buildInputs = with pkgs; [
-              iconv
               libelf
               llvmPackages.clang
               pkg-config
               zlib
               zstd
-
-              pkgsCross.avr.buildPackages.gcc11
             ];
 
             LIBCLANG_PATH = "${pkgs.llvmPackages.libclang.lib}/lib";
