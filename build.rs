@@ -144,7 +144,11 @@ fn generate_bindings(out: &Path) {
         builder = builder.header(header);
     }
 
+    let target = std::env::var("TARGET").expect("TARGET env var not set");
+    println!(" => Target: {}", target);
     let bindings = builder
+        .clang_arg("-target")
+        .clang_arg(&target) // Ensure 64-bit target
         .generate()
         .expect("Couldn't generate simavr's bindings");
 
