@@ -3,16 +3,16 @@
 [crates-badge]: https://img.shields.io/crates/v/simavr-ffi.svg
 [crates-link]: https://crates.io/crates/simavr-ffi
 
-Low-level unsafe bindings to [simavr](https://github.com/buserror/simavr):
+Low-level bindings to [simavr](https://github.com/buserror/simavr):
 
 ```toml
 [dependencies]
 simavr-ffi = "1"
 ```
 
-Supported platforms: Linux & Mac (pull requests for Windows etc. welcome!).
+Supported platforms: Linux & Mac (pull requests for other platforms welcome!).
 
-If you're looking for something high-level and safe, see [AvrTester](https://github.com/Patryk27/avr-tester).
+If you're looking for something high-level, see [avr-tester](https://github.com/Patryk27/avr-tester).
 
 ## Requirements
 
@@ -40,13 +40,6 @@ $ sudo apt install clang libelf-dev pkg-config
 ```bash
 $ brew install libelf pkg-config
 ```
-
-## FAQ
-
-### How does it compare to `simavr-sys`?
-
-[`simavr-sys`](https://github.com/dylanmckay/simavr-sim) seems unmaintained at
-the moment, while `simavr-ffi` is up-to-date.
 
 ## License
 
