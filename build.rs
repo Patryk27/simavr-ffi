@@ -13,7 +13,7 @@ fn main() {
 
     check();
     copy(&out);
-    patch(&out);
+    patch();
     build(&out);
     generate_bindings(&out);
     link();
@@ -57,36 +57,11 @@ fn copy(out: &Path) {
         .unwrap();
 }
 
-fn patch(out: &Path) {
+fn patch() {
     println!("=> Patching simavr");
 
     #[cfg(feature = "patch-twi-inconsistencies")]
-    patch_ex(out, "twi-inconsistencies.patch");
-
-    let _ = out;
-}
-
-#[allow(unused)]
-fn patch_ex(out: &Path, name: &str) {
-    let path = Path::new(file!())
-        .parent()
-        .unwrap()
-        .join("patches")
-        .join(name)
-        .canonicalize()
-        .unwrap();
-
-    let status = Command::new("patch")
-        .arg("-p1")
-        .arg("-i")
-        .arg(path)
-        .current_dir(out.join("simavr"))
-        .status()
-        .expect("Couldn't run `patch`");
-
-    if !status.success() {
-        panic!("`patch` returned a non-zero exit code");
-    }
+    println!("cargo:warning=The 'patch-twi-inconsistencies' feature is deprecated");
 }
 
 fn build(out: &Path) {
