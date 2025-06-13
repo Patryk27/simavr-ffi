@@ -13,7 +13,6 @@ fn main() {
 
     check();
     copy(&out);
-    patch();
     build(&out);
     generate_bindings(&out);
     link();
@@ -55,13 +54,6 @@ fn copy(out: &Path) {
             )
         })
         .unwrap();
-}
-
-fn patch() {
-    println!("=> Patching simavr");
-
-    #[cfg(feature = "patch-twi-inconsistencies")]
-    println!("cargo:warning=The 'patch-twi-inconsistencies' feature is deprecated");
 }
 
 fn build(out: &Path) {

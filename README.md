@@ -19,7 +19,6 @@ If you're looking for something high-level and safe, see [AvrTester](https://git
 Compile-time:
 
 - clang,
-- patch (optional, required only if you enable the `patch-twi-inconsistencies` feature flag),
 - libelf,
 - pkg-config,
 - zlib.
@@ -41,12 +40,6 @@ $ sudo apt install clang libelf-dev pkg-config
 ```bash
 $ brew install libelf pkg-config
 ```
-
-## Feature flags
-
-If you want, you can activate following feature flags (disabled by default):
-
-- `patch-twi-inconsistencies` - applies a fix for https://github.com/buserror/simavr/issues/453
 
 ## FAQ
 
